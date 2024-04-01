@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 0;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+a:hover {
+  background-color: #0056b3;
+}
+
+.translator-container {
+  margin: 1em auto;
+}
+
+.text-area-container {
+  margin-bottom: 1em;
+}
+
+.text-area {
+  height: 10em !important;
+}
+
+.language-select {
+  width: 100%;
+  margin-bottom: 0.5em;
+}
