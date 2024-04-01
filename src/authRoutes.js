@@ -1,3 +1,4 @@
+// File made with the assistance of Chat-GPT
 require('dotenv').config();
 const { messages } = require('../public/lang/messages/en/messages.js');
 const express = require('express');

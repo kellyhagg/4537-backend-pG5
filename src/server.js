@@ -1,3 +1,4 @@
+// File made with the assistance of Chat-GPT
 require('dotenv').config();
 const path = require('path');
 const express = require('express');

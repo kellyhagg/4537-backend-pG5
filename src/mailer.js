@@ -1,3 +1,4 @@
+// File made with the assistance of Chat-GPT
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -25,4 +26,4 @@ const sendPasswordResetEmail = (to, token) => {
   });
 };
 
-module.exports = {sendPasswordResetEmail};
+module.exports = { sendPasswordResetEmail };

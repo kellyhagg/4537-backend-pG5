@@ -1,3 +1,4 @@
+// File made with the assistance of Chat-GPT
 // When the translate button is clicked
 $('#translateButton').click(function () {
     // Get the values from your form

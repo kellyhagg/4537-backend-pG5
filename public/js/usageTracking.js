@@ -1,3 +1,4 @@
+// File made with the assistance of Chat-GPT
 $(document).ready(function () {
     $.ajax({
         url: '/auth/users',
