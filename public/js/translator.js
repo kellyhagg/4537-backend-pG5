@@ -22,6 +22,7 @@ $('#translateButton').click(function () {
         success: function (response) {
             // Assuming the server returns a JSON object with the translation in a field called 'translation'
             $('#translatedText').val(response.translation);
+            checkApiCallLimit();
         },
         error: function (xhr, status, error) {
             // Handle any errors here
