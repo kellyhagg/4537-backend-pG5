@@ -32,6 +32,12 @@
           <textarea class="form-control text-area" id="translatedText" placeholder="Translation" readonly></textarea>
         </div>
       </div>
+      <div id="freeCallsContainer" class="text-center">
+        <p>You have <span id="userFreeCalls">0</span> free API calls remaining.</p>
+      </div>
+      <div class="alert alert-danger" id="apiCallWarning" style="display: none;">
+        <strong>Warning!</strong> You have exceeded your free API call limit.
+      </div>
     </div>
     <div class="row">
       <div class="col-md-12 text-center">
@@ -43,6 +49,7 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="js/translator.js"></script>
+  <script src="js/userFreeCalls.js"></script>
 
 </body>
 
