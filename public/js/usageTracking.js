@@ -5,7 +5,7 @@ $(document).ready(function () {
         type: 'GET',
         success: function (users) {
             // Start with an empty string for the table rows
-            var tableRows = '';
+            let tableRows = '';
 
             // Loop through each user to build table rows
             users.forEach(function (user) {
