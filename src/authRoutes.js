@@ -124,6 +124,19 @@ router.post('/translate', authenticateToken, async (req, res) => {
   }
 });
 
+// Endpoint to get the number of free API calls
+router.get('/free-calls', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).send('User not found');
+
+    res.json({ apiCallsCount: user.apiCallsCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
 // Forgot password endpoint
 router.post('/forgot-password', async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
