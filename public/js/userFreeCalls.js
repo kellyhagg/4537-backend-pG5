@@ -20,6 +20,4 @@ function checkApiCallLimit() {
 $(document).ready(function () {
     // Check API call limit on page load
     checkApiCallLimit();
-    // Check API call limit on translate button click
-    $('#translateButton').click(function () { checkApiCallLimit(); });
 });
