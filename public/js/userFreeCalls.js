@@ -7,7 +7,7 @@ function checkApiCallLimit() {
             let userFreeCalls = 20 - response.apiCallsCount;
             $('#userFreeCalls').text(userFreeCalls);
             if (userFreeCalls <= 0) {
-                $("#userFreeCalls").hide();
+                $("#freeCallsContainer").hide();
                 $('#apiCallWarning').show();
             }
         },
