@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const User = require('./user');
+const ApiCall = require('./apiCall');
 const { sendPasswordResetEmail } = require('./mailer');
 const router = express.Router();
 
@@ -19,6 +20,13 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
     await user.save();
+
+    // Create an ApiCall entry for the new user with the initial apiCallsCount set to 0
+    const newApiCall = new ApiCall({
+      userId: user._id, // Reference the newly created user's ID
+      apiCallsCount: 0 // Initialize the count to 0
+    });
+    await newApiCall.save();
 
     const confirmationPage = `
       <!DOCTYPE html>
@@ -108,13 +116,12 @@ router.post('/translate', authenticateToken, async (req, res) => {
     // Get the translation from the external API's response
     const translatedText = translationResponse.data.translation;
 
-    // Check if user object exists and has _id property
-    if (!req.user || !req.user.userId) {
-      return res.sendStatus(401); // Unauthorized
-    }
-
-    // Increment apiCallsCount by one for the user
-    await User.findByIdAndUpdate(req.user.userId, { $inc: { apiCallsCount: 1 } });
+    // Find or create the ApiCall document for the user
+    const apiCallDocument = await ApiCall.findOneAndUpdate(
+      { userId: req.user.userId },
+      { $inc: { apiCallsCount: 1 } },
+      { new: true, upsert: true } // Use upsert option to create a new document if it doesn't exist
+    );
 
     // Respond to the client with the translation
     res.json({ translation: translatedText }); // Make sure translatedText is defined
@@ -127,10 +134,10 @@ router.post('/translate', authenticateToken, async (req, res) => {
 // Endpoint to get the number of free API calls
 router.get('/free-calls', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
-    if (!user) return res.status(404).send('User not found');
+    const apiCallDocument = await ApiCall.findOne({ userId: req.user.userId });
+    if (!apiCallDocument) return res.status(404).send('ApiCall document not found');
 
-    res.json({ apiCallsCount: user.apiCallsCount });
+    res.json({ apiCallsCount: apiCallDocument.apiCallsCount });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
