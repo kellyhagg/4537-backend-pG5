@@ -194,12 +194,12 @@ function authenticateAdmin(req, res, next) {
 }
 
 // PUT endpoint to reset a user's API calls count
-router.put('/user/:userId/reset-api-calls', authenticateAdmin, async (req, res) => {
+router.put('/reset-api-calls/:userId', authenticateAdmin, async (req, res) => {
   try {
     // Reset the apiCallsCount for the user specified by userId param
     const updatedApiCall = await ApiCall.findOneAndUpdate(
       { userId: req.params.userId },
-      { apiCallsCount: 0 },
+      { $set: { apiCallsCount: 0 } }, // Use $set to update the field
       { new: true }
     );
 
