@@ -3,8 +3,12 @@ const ApiStats = require('./apiSchema');
 
 const recordApiCall = async (req, res, next) => {
     try {
-        const endpoint = req.originalUrl;
+        let endpoint = req.originalUrl;
         const method = req.method;
+
+        // Remove the user ID from the endpoint if it exists
+        const userIdPattern = /\/[0-9a-fA-F]{24}/; // Regex pattern to match MongoDB ObjectId
+        endpoint = endpoint.replace(userIdPattern, '');
 
         // Record the API call in the database
         await ApiStats.updateOne(
