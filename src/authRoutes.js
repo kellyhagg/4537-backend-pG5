@@ -6,8 +6,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const User = require('./user');
+const ApiCall = require('./apiCall');
+const recordApiCall = require('./apiStats');
+const ApiStats = require('./apiSchema');
 const { sendPasswordResetEmail } = require('./mailer');
 const router = express.Router();
+router.use(recordApiCall); // Record API call stats for all routes
 
 // User Registration Endpoint
 router.post('/register', async (req, res) => {
@@ -19,6 +23,13 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
     await user.save();
+
+    // Create an ApiCall entry for the new user with the initial apiCallsCount set to 0
+    const newApiCall = new ApiCall({
+      userId: user._id, // Reference the newly created user's ID
+      apiCallsCount: 0 // Initialize the count to 0
+    });
+    await newApiCall.save();
 
     const confirmationPage = `
       <!DOCTYPE html>
@@ -108,19 +119,132 @@ router.post('/translate', authenticateToken, async (req, res) => {
     // Get the translation from the external API's response
     const translatedText = translationResponse.data.translation;
 
-    // Check if user object exists and has _id property
-    if (!req.user || !req.user.userId) {
-      return res.sendStatus(401); // Unauthorized
-    }
-
-    // Increment apiCallsCount by one for the user
-    await User.findByIdAndUpdate(req.user.userId, { $inc: { apiCallsCount: 1 } });
+    // Find or create the ApiCall document for the user
+    const apiCallDocument = await ApiCall.findOneAndUpdate(
+      { userId: req.user.userId },
+      { $inc: { apiCallsCount: 1 } },
+      { new: true, upsert: true } // Use upsert option to create a new document if it doesn't exist
+    );
 
     // Respond to the client with the translation
     res.json({ translation: translatedText }); // Make sure translatedText is defined
   } catch (error) {
     console.error("Error during translation:", error);
     res.status(500).send("Error processing translation.");
+  }
+});
+
+// Endpoint to get the number of free API calls
+router.get('/free-calls', authenticateToken, async (req, res) => {
+  try {
+    const apiCallDocument = await ApiCall.findOne({ userId: req.user.userId });
+    if (!apiCallDocument) return res.status(404).send('ApiCall document not found');
+
+    res.json({ apiCallsCount: apiCallDocument.apiCallsCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
+// Endpoint to get API call counts for all users
+router.get('/user-api-calls', async (req, res) => {
+  try {
+    // Retrieve all users and join with the ApiCalls collection
+    const usersWithApiCalls = await User.aggregate([
+      {
+        $lookup: {
+          from: "apicalls",
+          localField: "_id",
+          foreignField: "userId",
+          as: "apiCallsInfo"
+        }
+      },
+      {
+        $unwind: "$apiCallsInfo" // Unwind the array to merge the data into the user object
+      },
+      {
+        $project: {
+          firstName: 1,
+          email: 1,
+          apiCallsCount: "$apiCallsInfo.apiCallsCount" // Project the apiCallsCount from the joined document
+        }
+      }
+    ]);
+    res.json(usersWithApiCalls);
+  } catch (error) {
+    console.error('Failed to retrieve user API calls:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+// Middleware to verify the admin token
+function authenticateAdmin(req, res, next) {
+  const token = req.cookies.adminToken; // Get admin token from HTTP-only cookie
+  if (!token) {
+    return res.sendStatus(401); // No token, unauthorized
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+    if (err || decodedToken.adminId !== 'admin') {
+      return res.sendStatus(403); // Token is invalid or expired, or not admin
+    }
+    next(); // Token is valid, proceed
+  });
+}
+
+// PUT endpoint to reset a user's API calls count
+router.put('/reset-api-calls/:userId', authenticateAdmin, async (req, res) => {
+  try {
+    // Reset the apiCallsCount for the user specified by userId param
+    const updatedApiCall = await ApiCall.findOneAndUpdate(
+      { userId: req.params.userId },
+      { $set: { apiCallsCount: 0 } }, // Use $set to update the field
+      { new: true }
+    );
+
+    if (!updatedApiCall) {
+      return res.status(404).send("User's API call record not found.");
+    }
+
+    res.send({ message: "API calls count has been reset.", apiCallsCount: updatedApiCall.apiCallsCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error while resetting API calls count.");
+  }
+});
+
+// DELETE endpoint to delete a user
+router.delete('/delete-user/:userId', authenticateAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // First, delete or handle related data like the user's API calls records
+    await ApiCall.deleteMany({ userId });
+
+    // Then, delete the user
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).send("User not found.");
+    }
+
+    res.send({ message: "User deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error while deleting user.");
+  }
+});
+
+
+// Endpoint to get API stats for all endpoints
+router.get('/api-stats', async (req, res) => {
+  try {
+    const apiStats = await ApiStats.find(); // Fetch all stats from the ApiStats collection
+    res.json(apiStats); // Send the stats back to the client
+  } catch (error) {
+    console.error('Failed to retrieve API stats:', error);
+    res.status(500).send('Server error');
   }
 });
 

@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | Simple Translator</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
@@ -14,7 +15,7 @@
         <div class="row">
             <div class="col text-center">
                 <h1 class="mb-4">Usage Tracking</h1>
-                <!-- Responsive table start -->
+                <h2 class="mb-4">Users</h2>
                 <div class="table-responsive">
                     <table class="table table-striped" id="usageTrackingTable">
                         <thead>
@@ -25,16 +26,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Table rows will be appended here by the JavaScript -->
                         </tbody>
                     </table>
                 </div>
-                <!-- Responsive table end -->
+                <h2 class="mb-4">Endpoint Stats</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="methodTrackingTable">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Endpoint</th>
+                                <th>Requests</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="js/usageTracking.js"></script>
