@@ -1,28 +1,22 @@
 // File made with the assistance of Chat-GPT
 $(document).ready(function () {
     $.ajax({
-        url: '/auth/users',
+        url: '/auth/user-api-calls',
         type: 'GET',
-        success: function (users) {
-            // Start with an empty string for the table rows
+        success: function (usersWithApiCalls) {
             let tableRows = '';
-
-            // Loop through each user to build table rows
-            users.forEach(function (user) {
+            usersWithApiCalls.forEach(function (user) {
                 tableRows += '<tr>';
                 tableRows += '<td>' + user.firstName + '</td>';
                 tableRows += '<td>' + user.email + '</td>';
-                tableRows += '<td>' + user.apiCallsCount + '</td>';
+                // Access the apiCallsCount from the user object
+                tableRows += '<td>' + (user.apiCallsCount || 0) + '</td>'; // Fallback to 0 if undefined
                 tableRows += '</tr>';
             });
-
-            console.log
-            // Append the rows to the table body
             $('#usageTrackingTable tbody').html(tableRows);
         },
         error: function (error) {
-            console.log('Error fetching users:', error);
+            console.log('Error fetching user API calls:', error);
         }
     });
 });
-
