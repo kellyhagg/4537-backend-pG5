@@ -214,6 +214,29 @@ router.put('/reset-api-calls/:userId', authenticateAdmin, async (req, res) => {
   }
 });
 
+// DELETE endpoint to delete a user
+router.delete('/delete-user/:userId', authenticateAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // First, delete or handle related data like the user's API calls records
+    await ApiCall.deleteMany({ userId });
+
+    // Then, delete the user
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).send("User not found.");
+    }
+
+    res.send({ message: "User deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error while deleting user.");
+  }
+});
+
+
 // Endpoint to get API stats for all endpoints
 router.get('/api-stats', async (req, res) => {
   try {
