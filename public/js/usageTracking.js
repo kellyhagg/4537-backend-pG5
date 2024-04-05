@@ -12,6 +12,8 @@ $(document).ready(function () {
                 tableRows += '<td>' + user.email + '</td>';
                 // Access the apiCallsCount from the user object
                 tableRows += '<td>' + (user.apiCallsCount || 0) + '</td>'; // Fallback to 0 if undefined
+                tableRows += '<td><button class="btn btn-primary" onclick="resetApiCallCount(\'' + user._id + '\')">Reset Count</button></td>';
+                tableRows += '<td><button class="btn btn-danger" onclick="deleteUser(\'' + user._id + '\')">Delete</button></td>';
                 tableRows += '</tr>';
             });
             $('#usageTrackingTable tbody').html(tableRows);
@@ -41,3 +43,31 @@ $(document).ready(function () {
         }
     });
 });
+
+function resetApiCallCount(userId) {
+    $.ajax({
+        url: '/auth/reset-api-calls/' + userId,
+        type: 'PUT',
+        success: function (response) {
+            // Reload the page after the reset
+            location.reload();
+        },
+        error: function (error) {
+            console.log('Error resetting API call count:', error);
+        }
+    });
+}
+
+function deleteUser(userId) {
+    $.ajax({
+        url: '/auth/delete-user/' + userId,
+        type: 'DELETE',
+        success: function (response) {
+            // Reload the page after the delete
+            location.reload();
+        },
+        error: function (error) {
+            console.log('Error deleting user:', error);
+        }
+    });
+}
