@@ -7,8 +7,10 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const User = require('./user');
 const ApiCall = require('./apiCall');
+const recordApiCall = require('./apiStats');
 const { sendPasswordResetEmail } = require('./mailer');
 const router = express.Router();
+router.use(recordApiCall); // Record API call stats for all routes
 
 // User Registration Endpoint
 router.post('/register', async (req, res) => {
@@ -172,6 +174,42 @@ router.get('/user-api-calls', async (req, res) => {
   } catch (error) {
     console.error('Failed to retrieve user API calls:', error);
     res.status(500).send('Server error');
+  }
+});
+
+// Middleware to verify the admin token
+function authenticateAdmin(req, res, next) {
+  const token = req.cookies.adminToken; // Get admin token from HTTP-only cookie
+  if (!token) {
+    return res.sendStatus(401); // No token, unauthorized
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+    if (err || decodedToken.adminId !== 'admin') {
+      return res.sendStatus(403); // Token is invalid or expired, or not admin
+    }
+    next(); // Token is valid, proceed
+  });
+}
+
+// PUT endpoint to reset a user's API calls count
+router.put('/user/:userId/reset-api-calls', authenticateAdmin, async (req, res) => {
+  try {
+    // Reset the apiCallsCount for the user specified by userId param
+    const updatedApiCall = await ApiCall.findOneAndUpdate(
+      { userId: req.params.userId },
+      { apiCallsCount: 0 },
+      { new: true }
+    );
+
+    if (!updatedApiCall) {
+      return res.status(404).send("User's API call record not found.");
+    }
+
+    res.send({ message: "API calls count has been reset.", apiCallsCount: updatedApiCall.apiCallsCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error while resetting API calls count.");
   }
 });
 
