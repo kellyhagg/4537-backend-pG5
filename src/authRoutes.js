@@ -74,6 +74,13 @@ router.post('/login', async (req, res) => {
   return res.status(400).send("Incorrect password or email."); // Return here to ensure response is sent only once
 });
 
+// User Logout Endpoint
+router.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.clearCookie('adminToken');
+  res.redirect('/index.html');
+});
+
 // Get users endpoint
 router.get('/users', async (req, res) => {
   try {
@@ -83,6 +90,22 @@ router.get('/users', async (req, res) => {
   } catch (error) {
     console.error('Failed to retrieve users:', error);
     res.status(500).send('Failed to get users.');
+  }
+});
+
+// Check Login Endpoint
+router.get('/check-login', authenticateToken, async (req, res) => {
+  try {
+    // req.user is set by the authenticateToken middleware
+    const user = await User.findById(req.user.userId);
+    if (user) {
+      res.json({ loggedIn: true, name: user.firstName });
+    } else {
+      res.json({ loggedIn: false });
+    }
+  } catch (error) {
+    console.error('Error checking login status:', error);
+    res.status(500).send('Error checking login status.');
   }
 });
 
