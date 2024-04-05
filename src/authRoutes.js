@@ -8,6 +8,7 @@ const axios = require('axios');
 const User = require('./user');
 const ApiCall = require('./apiCall');
 const recordApiCall = require('./apiStats');
+const ApiStats = require('./apiSchema');
 const { sendPasswordResetEmail } = require('./mailer');
 const router = express.Router();
 router.use(recordApiCall); // Record API call stats for all routes
@@ -210,6 +211,17 @@ router.put('/user/:userId/reset-api-calls', authenticateAdmin, async (req, res) 
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error while resetting API calls count.");
+  }
+});
+
+// Endpoint to get API stats for all endpoints
+router.get('/api-stats', async (req, res) => {
+  try {
+    const apiStats = await ApiStats.find(); // Fetch all stats from the ApiStats collection
+    res.json(apiStats); // Send the stats back to the client
+  } catch (error) {
+    console.error('Failed to retrieve API stats:', error);
+    res.status(500).send('Server error');
   }
 });
 
