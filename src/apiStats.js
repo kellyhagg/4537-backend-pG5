@@ -3,8 +3,6 @@ const ApiStats = require('./apiSchema');
 
 const recordApiCall = async (req, res, next) => {
     try {
-        console.log('Recording API call:', req.method, req.originalUrl);
-        // Use req.originalUrl or req.path depending on whether you want the query string included
         const endpoint = req.originalUrl;
         const method = req.method;
 
