@@ -144,6 +144,37 @@ router.get('/free-calls', authenticateToken, async (req, res) => {
   }
 });
 
+// Endpoint to get API call counts for all users
+router.get('/user-api-calls', async (req, res) => {
+  try {
+    // Retrieve all users and join with the ApiCalls collection
+    const usersWithApiCalls = await User.aggregate([
+      {
+        $lookup: {
+          from: "apicalls",
+          localField: "_id",
+          foreignField: "userId",
+          as: "apiCallsInfo"
+        }
+      },
+      {
+        $unwind: "$apiCallsInfo" // Unwind the array to merge the data into the user object
+      },
+      {
+        $project: {
+          firstName: 1,
+          email: 1,
+          apiCallsCount: "$apiCallsInfo.apiCallsCount" // Project the apiCallsCount from the joined document
+        }
+      }
+    ]);
+    res.json(usersWithApiCalls);
+  } catch (error) {
+    console.error('Failed to retrieve user API calls:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 // Forgot password endpoint
 router.post('/forgot-password', async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
