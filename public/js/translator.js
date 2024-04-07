@@ -15,7 +15,8 @@ $('#translateButton').click(function () {
 
     // Make the API call to your server-side endpoint
     $.ajax({
-        url: '/auth/translate',
+        // url: '/auth/translate',
+        url:'https://chiseled-recondite-brisket.glitch.me/auth/translate',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(requestData),
