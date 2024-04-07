@@ -111,20 +111,37 @@ router.get('/check-login', authenticateToken, async (req, res) => {
 
 // Middleware to authenticate token
 function authenticateToken(req, res, next) {
-  const token = req.cookies.token; // Get token from HTTP-only cookie
-
-  if (!token) {
-    return res.sendStatus(401); // No token, unauthorized
+  // Check for the admin token first
+  const adminToken = req.cookies.adminToken;
+  if (adminToken) {
+    return jwt.verify(adminToken, process.env.JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        return res.sendStatus(403); // Admin token is invalid or expired
+      }
+      if (decodedToken.adminId === 'admin') {
+        req.admin = true; // Mark the request as authenticated by an admin
+        return next();
+      }
+      return res.sendStatus(403); // Token did not decode to an admin ID
+    });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
-    if (err) {
-      return res.sendStatus(403); // Token is invalid or expired
-    }
-    req.user = { userId: decodedToken.userId }; // Set the user object for the next middleware
-    next();
-  });
+  // Check for a regular user token if no admin token is found
+  const token = req.cookies.token;
+  if (token) {
+    return jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        return res.sendStatus(403); // Token is invalid or expired
+      }
+      req.user = { userId: decodedToken.userId }; // Set the user object for the next middleware
+      return next();
+    });
+  }
+
+  // No token found, unauthorized
+  return res.sendStatus(401);
 }
+
 
 // Translation endpoint
 router.post('/translate', authenticateToken, async (req, res) => {
