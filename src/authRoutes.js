@@ -55,7 +55,7 @@ router.post('/register', async (req, res) => {
 // User Login Endpoint
 router.post('/login', async (req, res) => {
   // Admin user authentication
-  if (req.body.email === 'admin@admin.com' && req.body.password === '111') {
+  if (req.body.email === process.env.ADMIN_EMAIL && req.body.password === process.env.ADMIN_PASSWORD) {
     const adminToken = jwt.sign({ adminId: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.cookie('adminToken', adminToken, { httpOnly: true });
