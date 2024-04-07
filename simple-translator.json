@@ -1,0 +1,373 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "pG5 Simple Translator API",
+    "description": "This API provides functionality for user management, session handling, and translation services. It allows developers to register users, handle login sessions, and utilize a translation service to translate text between supported languages."
+  },
+  "host": "https://chiseled-recondite-brisket.glitch.me",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "Registers a new user with their name, email, and password. Returns a confirmation message.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User registration data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserRegistration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registration successful, redirecting to login page..."
+          },
+          "500": {
+            "description": "Error occurred during registration"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticates a user by their email and password and returns a session token if successful.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User login credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email or password"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "summary": "Logout user",
+        "description": "Logs out the current user and clears session cookies.",
+        "responses": {
+          "200": {
+            "description": "Logout successful"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List all users",
+        "description": "Retrieves a list of all registered users excluding sensitive details.",
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserPublic"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve users"
+          }
+        }
+      }
+    },
+    "/translate": {
+      "post": {
+        "summary": "Translate text",
+        "description": "Translates text from one language to another for authenticated users.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Translation request data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TranslationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Translation successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "translation": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error processing translation"
+          }
+        }
+      }
+    },
+    "/free-calls": {
+      "get": {
+        "summary": "Check free API calls",
+        "description": "Checks the number of free API calls remaining for the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "Number of free API calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "apiCallsCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ApiCall document not found"
+          }
+        }
+      }
+    },
+    "/check-login": {
+      "get": {
+        "summary": "Check login status",
+        "description": "Checks the login status of the user based on an authentication token.",
+        "responses": {
+          "200": {
+            "description": "Login status returned",
+            "schema": {
+              "$ref": "#/definitions/LoginStatus"
+            }
+          },
+          "500": {
+            "description": "Error checking login status"
+          }
+        }
+      }
+    },
+    "/user-api-calls": {
+      "get": {
+        "summary": "Get API call counts for all users",
+        "description": "Retrieves the number of API calls made by each user.",
+        "responses": {
+          "200": {
+            "description": "API calls count returned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserApiCalls"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve user API calls"
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "summary": "Forgot password",
+        "description": "Sends a password reset email to the user.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User's email",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password reset email sent"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/reset-password/{token}": {
+      "post": {
+        "summary": "Reset password",
+        "description": "Allows the user to reset their password using a valid token.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Password reset token"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "New password and confirmation",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ResetPassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password updated successfully"
+          },
+          "400": {
+            "description": "Invalid token or password mismatch"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UserRegistration": {
+      "type": "object",
+      "required": ["firstName", "email", "password"],
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "John"
+        },
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "yourPassword123"
+        }
+      }
+    },
+    "UserLogin": {
+      "type": "object",
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "yourPassword123"
+        }
+      }
+    },
+    "UserPublic": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "John"
+        },
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        }
+      }
+    },
+    "TranslateRequest": {
+      "type": "object",
+      "required": ["text", "source_language", "target_language"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "example": "Hello world"
+        },
+        "source_language": {
+          "type": "string",
+          "example": "en"
+        },
+        "target_language": {
+          "type": "string",
+          "example": "es"
+        }
+      }
+    },
+    "TranslateResponse": {
+      "type": "object",
+      "properties": {
+        "translation": {
+          "type": "string",
+          "example": "Hola mundo"
+        }
+      }
+    },
+    "LoginStatus": {
+      "type": "object",
+      "properties": {
+        "loggedIn": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "UserApiCalls": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "apiCallsCount": {
+          "type": "integer"
+        }
+      }
+    },
+    "ResetPassword": {
+      "type": "object",
+      "required": ["password", "confirmPassword"],
+      "properties": {
+        "password": {
+          "type": "string",
+          "format": "password",
+          "example": "newPassword123"
+        },
+        "confirmPassword": {
+          "type": "string",
+          "format": "password",
+          "example": "newPassword123"
+        }
+      }
+    }
+  }
+}
