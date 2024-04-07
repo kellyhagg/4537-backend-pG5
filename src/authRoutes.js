@@ -312,4 +312,8 @@ router.post('/reset-password/:token', async (req, res) => {
   res.send(messages.updatePassword);
 });
 
-module.exports = router;
+module.exports = {
+  router,
+  authenticateToken
+};
+
