@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const logoutButton = document.getElementById('logoutButton');
 
   // Function to update the UI with the user's name
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to handle logout
   function logout() {
-    fetch('/auth/logout', {
+    fetch('https://chiseled-recondite-brisket.glitch.me/auth/logout', {
       method: 'GET',
       credentials: 'include'
     })
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
   logoutButton.addEventListener('click', logout);
 
   // Check if the user is logged in and update the UI accordingly
-  fetch('/auth/check-login', {
+  fetch('https://chiseled-recondite-brisket.glitch.me/auth/check-login', {
     credentials: 'include'
   })
     .then(response => response.json())
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Fetch the login status from the server
-fetch('/auth/check-login', {
+fetch('https://chiseled-recondite-brisket.glitch.me/auth/check-login', {
   credentials: 'include'
 })
   .then(response => {
@@ -67,7 +67,8 @@ fetch('/auth/check-login', {
       // If not logged in, hide the logout button and potentially redirect to the login page
       document.getElementById('logoutButton').style.display = 'none';
       window.location.href = '/login.html';
-    }  })
+    }
+  })
   .catch(error => {
     console.error('Error checking login status:', error);
   });

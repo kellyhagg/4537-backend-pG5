@@ -1,8 +1,11 @@
 // File made with the assistance of Chat-GPT
 function checkApiCallLimit() {
     $.ajax({
-        url: '/auth/free-calls',
+        url: 'https://chiseled-recondite-brisket.glitch.me/auth/free-calls',
         type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
         success: function (response) {
             let userFreeCalls = 20 - response.apiCallsCount;
             $('#userFreeCalls').text(userFreeCalls);
