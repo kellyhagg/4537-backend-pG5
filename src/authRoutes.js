@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
     const adminToken = jwt.sign({ adminId: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.cookie('adminToken', adminToken, { httpOnly: true });
-    return res.redirect('/admin.html'); // Return here to prevent further execution
+    return res.redirect('https://4537-backend-p-g5.vercel.app/admin.html'); // Return here to prevent further execution
   }
 
   // Regular user authentication
@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.cookie('token', token, { httpOnly: true });
-    return res.redirect('/home.html'); // Return here as well
+    return res.redirect('https://4537-backend-p-g5.vercel.app/home.html'); // Return here as well
   }
 
   return res.status(400).send("Incorrect password or email."); // Return here to ensure response is sent only once
