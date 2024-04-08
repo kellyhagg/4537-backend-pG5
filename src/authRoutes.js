@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
   if (user && await bcrypt.compare(req.body.password, user.password)) {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.cookie('token', token, { httpOnly: true, sameSite: 'strict', path: '/' });
+    res.cookie('token', token, { httpOnly: true });
     return res.redirect('/home.html'); // Return here as well
   }
 
