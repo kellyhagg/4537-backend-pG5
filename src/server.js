@@ -1,6 +1,7 @@
 // File made with the assistance of Chat-GPT
 require('dotenv').config();
 const path = require('path');
+const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
@@ -8,8 +9,30 @@ const User = require('./user');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const { router: authRouter, authenticateToken } = require('./authRoutes');
+const allowedOrigins = ['http://localhost:3000',
+  'https://chiseled-recondite-brisket.glitch.me']; // Replace with your front-end app URLs
 const fs = require('fs');
 
+// CORS configuration
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // This is important for cookies, authorization headers with HTTPS
+  methods: ['GET', 'POST', 'PUT', 'DELETE'] // Allowed request methods
+}));
+
+/*
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+*/
 
 app.use(cookieParser());
 app.use(express.json());
@@ -22,6 +45,7 @@ const swaggerDocument = require('../simple-translator.json');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const protectedRouter = express.Router();
 protectedRouter.use(authenticateToken);
+
 
 // Serve unprotected static files manually
 app.get('*', (req, res, next) => {

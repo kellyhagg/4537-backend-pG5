@@ -2,8 +2,11 @@
 $(document).ready(function () {
     // AJAX call for usage-tracking
     $.ajax({
-        url: '/auth/user-api-calls',
+        url: 'https://chiseled-recondite-brisket.glitch.me/auth/user-api-calls',
         type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
         success: function (usersWithApiCalls) {
             let tableRows = '';
             usersWithApiCalls.forEach(function (user) {
@@ -25,8 +28,11 @@ $(document).ready(function () {
 
     // AJAX call for method-tracking
     $.ajax({
-        url: '/auth/api-stats', // Update with the correct path to your backend endpoint
+        url: 'https://chiseled-recondite-brisket.glitch.me/auth/api-stats', // Update with the correct path to your backend endpoint
         type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
         success: function (apiStats) {
             let tableRows = '';
             apiStats.forEach(function (stat) {
@@ -46,8 +52,11 @@ $(document).ready(function () {
 
 function resetApiCallCount(userId) {
     $.ajax({
-        url: '/auth/reset-api-calls/' + userId,
+        url: 'https://chiseled-recondite-brisket.glitch.me/auth/reset-api-calls/' + userId,
         type: 'PUT',
+        xhrFields: {
+            withCredentials: true
+        },
         success: function (response) {
             // Reload the page after the reset
             location.reload();
@@ -60,8 +69,11 @@ function resetApiCallCount(userId) {
 
 function deleteUser(userId) {
     $.ajax({
-        url: '/auth/delete-user/' + userId,
+        url: 'https://chiseled-recondite-brisket.glitch.me/auth/delete-user/' + userId,
         type: 'DELETE',
+        xhrFields: {
+            withCredentials: true
+        },
         success: function (response) {
             // Reload the page after the delete
             location.reload();
