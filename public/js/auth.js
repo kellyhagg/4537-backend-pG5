@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to handle logout
   function logout() {
-    fetch('https://chiseled-recondite-brisket.glitch.me/auth/logout', {
+    fetch('/auth/logout', {
       method: 'GET',
       credentials: 'include'
     })
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
   logoutButton.addEventListener('click', logout);
 
   // Check if the user is logged in and update the UI accordingly
-  fetch('https://chiseled-recondite-brisket.glitch.me/auth/check-login', {
+  fetch('/auth/check-login', {
     credentials: 'include'
   })
     .then(response => response.json())
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Fetch the login status from the server
-fetch('https://chiseled-recondite-brisket.glitch.me/auth/check-login', {
+fetch('/auth/check-login', {
   credentials: 'include'
 })
   .then(response => {
