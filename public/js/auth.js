@@ -1,4 +1,4 @@
-/*
+
 document.addEventListener('DOMContentLoaded', function () {
   const logoutButton = document.getElementById('logoutButton');
 
@@ -73,4 +73,3 @@ fetch('https://chiseled-recondite-brisket.glitch.me/auth/check-login', {
   .catch(error => {
     console.error('Error checking login status:', error);
   });
-*/
