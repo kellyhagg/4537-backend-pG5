@@ -5,10 +5,15 @@
     "title": "pG5 Simple Translator API",
     "description": "This API provides functionality for user management, session handling, and translation services. It allows developers to register users, handle login sessions, and utilize a translation service to translate text between supported languages."
   },
-  "host": "https://chiseled-recondite-brisket.glitch.me",
-  "schemes": ["https"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/register": {
       "post": {
@@ -258,7 +263,11 @@
   "definitions": {
     "UserRegistration": {
       "type": "object",
-      "required": ["firstName", "email", "password"],
+      "required": [
+        "firstName",
+        "email",
+        "password"
+      ],
       "properties": {
         "firstName": {
           "type": "string",
@@ -276,7 +285,10 @@
     },
     "UserLogin": {
       "type": "object",
-      "required": ["email", "password"],
+      "required": [
+        "email",
+        "password"
+      ],
       "properties": {
         "email": {
           "type": "string",
@@ -301,9 +313,13 @@
         }
       }
     },
-    "TranslateRequest": {
+    "TranslationRequest": {
       "type": "object",
-      "required": ["text", "source_language", "target_language"],
+      "required": [
+        "text",
+        "source_language",
+        "target_language"
+      ],
       "properties": {
         "text": {
           "type": "string",
@@ -355,7 +371,10 @@
     },
     "ResetPassword": {
       "type": "object",
-      "required": ["password", "confirmPassword"],
+      "required": [
+        "password",
+        "confirmPassword"
+      ],
       "properties": {
         "password": {
           "type": "string",
