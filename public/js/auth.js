@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
   logoutButton.addEventListener('click', logout);
 
   // Check if the user is logged in and update the UI accordingly
-  fetch('https://chiseled-recondite-brisket.glitch.me/auth/check-login', {
+  fetch('/auth/check-login', {
     credentials: 'include'
   })
     .then(response => response.json())
