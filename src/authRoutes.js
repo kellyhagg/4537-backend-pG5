@@ -305,6 +305,32 @@ router.post('/forgot-password', async (req, res) => {
   res.send(messages.resetSent);
 });
 
+// GET endpoint for displaying the password reset page
+router.get('/reset-password/:token', (req, res) => {
+  const { token } = req.params;
+  // You might want to verify the token here and then render a reset password form
+  // For simplicity, we'll assume the token is valid and just send back an HTML form
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Reset Password</title>
+    </head>
+    <body>
+      <h2>Reset Password</h2>
+      <form action="/auth/reset-password/${token}" method="post">
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="confirmPassword">Confirm New Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <button type="submit">Reset Password</button>
+      </form>
+    </body>
+    </html>
+  `);
+});
+
 // Reset password endpoint
 // TODO: Test this
 router.post('/reset-password/:token', async (req, res) => {
