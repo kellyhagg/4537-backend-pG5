@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendPasswordResetEmail = (to, token) => {
-  const resetURL = `http://<your-domain>/reset-password/${token}`;
+  const resetURL = `https://chiseled-recondite-brisket.glitch.me/auth/reset-password/${token}`;
   const mailOptions = {
     from: process.env.EMAIL,
     to: to,
