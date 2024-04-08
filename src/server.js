@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 const { router: authRouter, authenticateToken } = require('./authRoutes');
 const allowedOrigins = ['http://localhost:3000',
   'https://chiseled-recondite-brisket.glitch.me',
-  'https://4537-backend-p-g5.vercel.app/']; // Replace with your front-end app URLs
+  'https://4537-backend-p-g5.vercel.app']; // Replace with your front-end app URLs
 const fs = require('fs');
 
 // CORS configuration
