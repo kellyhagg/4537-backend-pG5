@@ -150,7 +150,7 @@ router.post('/translate', authenticateToken, async (req, res) => {
     const { text, source_language, target_language } = req.body;
 
     // Call the external API for translation
-    const translationResponse = await axios.post('https://588d-2604-3d08-657c-8100-912d-2b88-2ba-b66e.ngrok-free.app/translate', {
+    const translationResponse = await axios.post('https://0318-2604-3d08-657c-8100-fe25-d8fa-8b93-3cfd.ngrok-free.app/translate', {
       text: text,
       source_language: source_language,
       target_language: target_language
